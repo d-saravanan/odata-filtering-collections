@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.OData;
 using System.Web.Http.OData.Builder;
 
 namespace ODataSample
@@ -22,20 +23,27 @@ namespace ODataSample
             modelBuilder.EntitySet<User>("Users");
             var edmModel = modelBuilder.GetEdmModel();
 
-            //var projects = (EdmEntitySet)edmModel.EntityContainers().Single().FindEntitySet("Projects");
-            //var projectStatusTexts = (EdmEntitySet)edmModel.EntityContainers().Single().FindEntitySet("ProjectStatusTexts");
-            //var projectType = (EdmEntityType)edmModel.FindDeclaredType("ODataSample.Project");
-            //var projectStatusTextsType = (EdmEntityType)edmModel.FindDeclaredType("ODataSample.ProjectStatusText");
+            var projects = (EdmEntitySet)edmModel.EntityContainers().Single().FindEntitySet("Projects");
+            var projectStatusTexts = (EdmEntitySet)edmModel.EntityContainers().Single().FindEntitySet("ProjectStatusTexts");
+            var projectType = (EdmEntityType)edmModel.FindDeclaredType("ODataSample.Project");
+            var projectStatusTextsType = (EdmEntityType)edmModel.FindDeclaredType("ODataSample.ProjectStatusText");
 
-            //var partsProperty = new EdmNavigationPropertyInfo();
-            //partsProperty.TargetMultiplicity = EdmMultiplicity.Many;
-            //partsProperty.Target = projectStatusTextsType;
-            //partsProperty.ContainsTarget = false;
-            //partsProperty.OnDelete = EdmOnDeleteAction.None;
-            //partsProperty.Name = "ProjectStatusTexts";
+            var partsProperty = new EdmNavigationPropertyInfo();
+            partsProperty.TargetMultiplicity = EdmMultiplicity.Many;
+            partsProperty.Target = projectStatusTextsType;
+            partsProperty.ContainsTarget = false;
+            partsProperty.OnDelete = EdmOnDeleteAction.Cascade;
+            partsProperty.Name = "ProjectStatusTexts";
 
             //projects.AddNavigationTarget(projectType.AddUnidirectionalNavigation(partsProperty), projectStatusTexts);
 
+            var navigationProperty = projectType.AddUnidirectionalNavigation(partsProperty);
+            projects.AddNavigationTarget(navigationProperty, projectStatusTexts);
+
+            var linkBuilder = edmModel.GetEntitySetLinkBuilder(projects);
+            linkBuilder.AddNavigationPropertyLinkBuilder(navigationProperty,
+                new NavigationLinkBuilder((context, property) =>
+                    context.GenerateNavigationPropertyLink(property, false), true));
 
             config.Routes.MapODataRoute("odata", "odata", edmModel);
 

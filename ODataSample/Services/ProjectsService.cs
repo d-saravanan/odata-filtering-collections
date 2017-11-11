@@ -11,6 +11,11 @@ namespace ODataSample.Services
         public IQueryable<Project> GetProjects()
         {
             var ctx = new ProjectsContext();
+
+            var projects = ctx.Projects.Include("Status").Include("Status.ProjectStatusTexts");
+
+            var prj1 = ctx.Projects.Include("ProjectStatusTexts");
+
             return ctx.Projects;
         }
     }

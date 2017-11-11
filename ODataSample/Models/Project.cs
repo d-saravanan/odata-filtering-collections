@@ -28,18 +28,31 @@ namespace ODataSample
 
     public class ProjectStatus
     {
+        public ProjectStatus()
+        {
+            ProjectStatusTexts = new HashSet<ProjectStatusText>();
+        }
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public long StatusId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
         public virtual ICollection<ProjectStatusText> ProjectStatusTexts { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
     }
 
     public class ProjectStatusText
     {
+        public ProjectStatusText()
+        {
+            //ProjectStatus = new HashSet<ProjectStatus>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+        public long StatusId { get; set; }
+        //[ForeignKey("StatusId")]
+        //public IEnumerable<ProjectStatus> ProjectStatus { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public long LanguageId { get; set; }
@@ -51,13 +64,13 @@ namespace ODataSample
     public class Language
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public long LanguageId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
     }
 
-    public class User 
+    public class User
     {
         public User()
         {
@@ -74,7 +87,7 @@ namespace ODataSample
 
     //public class BaseEntity : IBaseEntity
     //{
-        
+
     //}
 
     public interface IBaseEntity : IAuditableEntity

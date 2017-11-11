@@ -12,10 +12,6 @@ namespace ODataSample.Services
         {
             var ctx = new ProjectsContext();
 
-            var projects = ctx.Projects.Include("Status").Include("Status.ProjectStatusTexts");
-
-            var prj1 = ctx.Projects.Include("ProjectStatusTexts");
-
             return ctx.Projects;
         }
     }
